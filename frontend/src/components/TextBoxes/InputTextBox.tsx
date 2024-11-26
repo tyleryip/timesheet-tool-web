@@ -1,5 +1,16 @@
 import React from "react";
+import TextBox from "./TextBox";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { selectInput } from "../../store/slices/timesheetSlice";
+import { changeInput } from "../../store/slices/timesheetSlice";
+import { inputLabel, inputPlaceholder } from "../../constants/Strings";
 
-export default function InputTextBox({ content }: { content: string }) {
-  return <textarea className="" rows={20} cols={50} value={content}></textarea>;
+export default function InputTextBox() {
+  const dispatch = useAppDispatch();
+
+  const input = useAppSelector(selectInput)
+
+  return (<div>
+    <TextBox label={inputLabel} placeholder={inputPlaceholder} content={input} readonly={false} onChangeHandler={(e: string) => dispatch(changeInput(e))}></TextBox>
+    </div>);
 }

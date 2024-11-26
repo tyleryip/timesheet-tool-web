@@ -23,9 +23,9 @@ export default function Layout() {
   return (
     <div className="bg-slate-200 grid place-items-center h-screen">
       <div className="grid-cols-3 space-x-20 flex items-center">
-        <InputTextBox content={text} />
+        <InputTextBox />
         <Button />
-        <OutputTextBox content={text} />
+        <OutputTextBox />
       </div>
     </div>
   );

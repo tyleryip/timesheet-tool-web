@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
-const timespanRegex = new RegExp("^([1-9][\d]?\:[\d]+)\-([1-9][\d]?\:[\d]+)$");
+const timespanRegex = /([1-9][\d]?\:[\d]+)\-([1-9][\d]?\:[\d]+)/;
 
 export interface TimesheetState {
     input: string;
@@ -19,8 +19,8 @@ export const timesheetSlice = createSlice({
     reducers: {
         changeInput: (state, action: PayloadAction<string>) => {
             return {
-                ...state,
                 input: action.payload,
+                output: ""
             };
         },
         parseInput: (state) => {
@@ -47,22 +47,20 @@ function parseTime(timeStr: string): Date {
 }
 
 function parseTimesheet(rawTimesheet: string): string {
+    // Split the raw timesheet string into individual lines
     let lines = rawTimesheet.split('\n')
-    let output = "";
+
+    let tasks = new Map<string, number>();
+    let currentTask = "";
     let totalTime = 0;
 
-    const tasks: { [key: string]: number } = {};
-    let currentTask = "";
-
-    // Parse line by line to extract tasks and convert timespans into durations
-    for (const line of lines) {
-        const timespanMatch = line.match(timespanRegex);
-
+    for (const line of lines) {        
         // Skip empty lines
         if (line.trim() === "") {
             continue;
         }
-
+        
+        const timespanMatch = line.match(timespanRegex);
         if (timespanMatch) {
             const start = timespanMatch[1];
             const end = timespanMatch[2];
@@ -91,31 +89,39 @@ function parseTimesheet(rawTimesheet: string): string {
             const durationInMillis = endTime.getTime() - startTime.getTime();
             const durationInHours = durationInMillis / (1000 * 60 * 60); // Convert from milliseconds to hours
 
-            if (tasks[currentTask] !== undefined) {
-                tasks[currentTask] += durationInHours;
+            if (!tasks.has(currentTask)) {
+                var currentDuration = tasks.get(currentTask) ?? 0
+                tasks.set(currentTask, currentDuration + durationInHours);
             } else {
-                tasks[currentTask] = durationInHours;
+                tasks.set(currentTask, durationInHours);
             }
 
             totalTime += durationInHours;
-
-        } else {
+        } 
+        else 
+        {
             currentTask = line.trim();
-            if (!(currentTask in tasks)) {
-                tasks[currentTask] = 0;
+            if (!tasks.has(currentTask)) {
+                tasks.set(currentTask, 0);
             }
         }
     }
 
     // Create the output string from the tasks
-    for (const [key, value] of Object.entries(tasks)) {
-        // Handle edge case for singular hour
-        if (value !== 1) {
-            output += `${key} (${value} hours)\n\n`;
-        } else {
-            output += `${key} (1 hour)\n\n`;
+    let output = "";
+    tasks.forEach((value, key) => {
+        switch(value) {
+            case 0:
+                // Ignore tasks with no durations
+                break;
+            case 1:
+                output += `${key} (1 hour)\n\n`;
+                break;
+            default:
+                output += `${key} (${value.toFixed(2)} hours)\n\n`;
+                break;
         }
-    }
+    });
 
     // Show total time at the end for validation
     output += `TOTAL TIME: ${totalTime} hours`;
