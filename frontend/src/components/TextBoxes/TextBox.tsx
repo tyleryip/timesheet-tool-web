@@ -1,24 +1,26 @@
 import React from "react";
-import "./TextBox.css"
+import "./TextBox.css";
 
 interface TextBoxProps {
-    label?: string,
-    placeholder?: string,
-    content: string,
-    readonly?: boolean,
-    onChangeHandler?: Function
+  placeholder?: string;
+  content: string;
+  readonly?: boolean;
+  onChangeHandler?: Function;
 }
 
-export default function TextBox({ label, placeholder, content, readonly = false, onChangeHandler = () => { } }: TextBoxProps) {
-    return (<div>
-        <p className="text-center mb-2">{label}</p>
-        <textarea
-            className="textbox rounded-lg p-2"
-            placeholder={placeholder}
-            readOnly={readonly}
-            onChange={(e) => onChangeHandler(e.target.value)}
-            rows={20}
-            cols={50}
-            value={content}>
-        </textarea></div>);
+export default function TextBox({
+  placeholder,
+  content,
+  readonly = false,
+  onChangeHandler = () => {},
+}: TextBoxProps) {
+  return (
+    <textarea
+      className="textbox flex-1 p-1"
+      placeholder={placeholder}
+      readOnly={readonly}
+      onChange={(e) => onChangeHandler(e.target.value)}
+      value={content}
+    ></textarea>
+  );
 }

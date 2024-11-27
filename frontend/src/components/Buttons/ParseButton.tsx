@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setOutput, selectInput } from "../../store/slices/timesheetSlice";
 import { parseButtonString } from "../../constants/Strings";
 
-export default function Button() {
+export default function ParseButton() {
   const dispatch = useAppDispatch();
 
   const input = useAppSelector(selectInput);
@@ -16,7 +16,7 @@ export default function Button() {
 
   return (
     <button
-      className="bg-zinc-700 text-white text-center font-bold py-2 px-4 mx-1 my-1 rounded"
+      className="bg-zinc-700 hover:bg-zinc-800 disabled:bg-zinc-600 disabled:cursor-not-allowed text-white text-center font-bold py-2 px-4 mx-1 my-1 rounded"
       disabled={input.length === 0}
       onClick={handleClick}
     >

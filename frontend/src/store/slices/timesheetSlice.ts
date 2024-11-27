@@ -46,6 +46,14 @@ export const timesheetSlice = createSlice({
                 totalTime: totalTime
             };
         },
+        clearInput: (_) => {
+            return {
+                input: "",
+                timesheet: Array<Task>(),
+                output: "",
+                totalTime: 0,
+            };
+        },
         clearOutput: (state) => {
             return {
                 ...state,
@@ -149,7 +157,7 @@ function generateOutput(tasks: Array<Task>): string {
         }
     });
 
-    return output;
+    return output.trim();
 }
 
 function calculateTotalTime(tasks: Array<Task>): number {
@@ -161,7 +169,7 @@ function calculateTotalTime(tasks: Array<Task>): number {
     return totalTime;
 }
 
-export const { setInput, setOutput, clearOutput } = timesheetSlice.actions
+export const { setInput, setOutput, clearInput, clearOutput } = timesheetSlice.actions
 
 export const selectInput = (state: RootState) => state.timesheet.input;
 export const selectOutput = (state: RootState) => state.timesheet.output;
