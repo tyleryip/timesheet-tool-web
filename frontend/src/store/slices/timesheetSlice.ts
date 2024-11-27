@@ -3,16 +3,21 @@ import { RootState } from "../store";
 
 const timespanRegex = /([1-9][\d]?:[\d]+)-([1-9][\d]?:[\d]+)/;
 
+export interface Task {
+    name: string,
+    hours: number
+}
+
 export interface TimesheetState {
     input: string;
-    timesheet: Map<string, number>;
+    timesheet: Array<Task>;
     output: string;
-    totalTime: number;
+    totalTime: number | null
 }
 
 const initialState: TimesheetState = {
     input: "",
-    timesheet: new Map<string, number>(),
+    timesheet: Array<Task>(),
     output: "",
     totalTime: 0
 };
@@ -21,22 +26,30 @@ export const timesheetSlice = createSlice({
     name: "timesheet",
     initialState,
     reducers: {
-        changeInput: (state, action: PayloadAction<string>) => {
+        setInput: (_, action: PayloadAction<string>) => {
             return {
-                ...state,
                 input: action.payload,
-                output: ""
+                timesheet: Array<Task>(),
+                output: "",
+                totalTime: 0,
             };
         },
-        parseTimesheet: (state) => {
+        setOutput: (state, action: PayloadAction<boolean>) => {
+            var parsedTimesheet = parseTimesheet(state.input)
+            var generatedOutput = generateOutput(parsedTimesheet)
+            var totalTime = action.payload ? calculateTotalTime(parsedTimesheet) : null
+
             return {
                 ...state,
-                output: parseTimesheet(state.input)
+                timesheet: parsedTimesheet,
+                output: generatedOutput,
+                totalTime: totalTime
             };
         },
         clearOutput: (state) => {
             return {
                 ...state,
+                timesheet: Array<Task>(),
                 output: "",
                 totalTime: 0,
             };
@@ -44,28 +57,26 @@ export const timesheetSlice = createSlice({
     }
 });
 
-// Helper function to convert a time string "HH:mm" to a Date object
 function parseTime(timeStr: string): Date {
     const [hours, minutes] = timeStr.split(':').map(Number);
     const date = new Date();
-    date.setHours(hours, minutes, 0, 0); // Set hours and minutes
+    date.setHours(hours, minutes, 0, 0);
     return date;
 }
 
-function parseTimesheet(rawTimesheet: string): string {
+function parseTimesheet(rawTimesheet: string): Array<Task> {
     // Split the raw timesheet string into individual lines
     let lines = rawTimesheet.split('\n')
 
-    let tasks = new Map<string, number>();
+    let tasksMap = new Map<string, number>();
     let currentTask = "";
-    let totalTime = 0;
 
-    for (const line of lines) {        
+    for (const line of lines) {
         // Skip empty lines
         if (line.trim() === "") {
             continue;
         }
-        
+
         const timespanMatch = line.match(timespanRegex);
         if (timespanMatch) {
             const start = timespanMatch[1];
@@ -92,50 +103,65 @@ function parseTimesheet(rawTimesheet: string): string {
                 endTime.setHours(endTime.getHours() + 12);
             }
 
-            const durationInMillis = endTime.getTime() - startTime.getTime();
-            const durationInHours = durationInMillis / (1000 * 60 * 60); // Convert from milliseconds to hours
+            const durationMilliseconds = endTime.getTime() - startTime.getTime();
+            const durationHours = durationMilliseconds / (1000 * 60 * 60); // Convert from milliseconds to hours
 
-            if (tasks.has(currentTask)) {
-                var currentDuration = tasks.get(currentTask) ?? 0
-                tasks.set(currentTask, currentDuration + durationInHours);
+            if (tasksMap.has(currentTask)) {
+                var currentDuration = tasksMap.get(currentTask) ?? 0
+                tasksMap.set(currentTask, currentDuration + durationHours);
             } else {
-                tasks.set(currentTask, durationInHours);
+                tasksMap.set(currentTask, durationHours);
             }
-
-            totalTime += durationInHours;
-        } 
-        else 
-        {
+        }
+        else {
             currentTask = line.trim();
-            if (!tasks.has(currentTask)) {
-                tasks.set(currentTask, 0);
+            if (!tasksMap.has(currentTask)) {
+                tasksMap.set(currentTask, 0);
             }
         }
     }
 
-    // Create the output string from the tasks
+    // Convert task map into array
+    let tasksArray = Array<Task>();
+    tasksMap.forEach((value, key) => {
+        tasksArray.push({
+            name: key,
+            hours: value
+        })
+    });
+
+    return tasksArray
+}
+
+function generateOutput(tasks: Array<Task>): string {
     let output = "";
-    tasks.forEach((value, key) => {
-        switch(value) {
+    tasks.forEach((task: Task) => {
+        switch (task.hours) {
             case 0:
                 // Ignore tasks with no durations
                 break;
             case 1:
-                output += `${key} (1 hour)\n\n`;
+                output += `${task.name} (1 hour)\n\n`;
                 break;
             default:
-                output += `${key} (${value.toFixed(2)} hours)\n\n`;
+                output += `${task.name} (${task.hours.toFixed(2)} hours)\n\n`;
                 break;
         }
     });
 
-    // Show total time at the end for validation
-    output += `TOTAL TIME: ${totalTime} hours`;
-
     return output;
 }
 
-export const { setInput, parseTimesheet, setOutput, clearOutput } = timesheetSlice.actions
+function calculateTotalTime(tasks: Array<Task>): number {
+    let totalTime = 0;
+    tasks.forEach((task: Task) => {
+        totalTime += task.hours
+    });
+
+    return totalTime;
+}
+
+export const { setInput, setOutput, clearOutput } = timesheetSlice.actions
 
 export const selectInput = (state: RootState) => state.timesheet.input;
 export const selectOutput = (state: RootState) => state.timesheet.output;

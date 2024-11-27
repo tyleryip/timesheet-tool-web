@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { parseTimesheet, selectInput } from "../../store/slices/timesheetSlice";
+import { setOutput, selectInput } from "../../store/slices/timesheetSlice";
 import { parseButtonString } from "../../constants/Strings";
 
 export default function Button() {
@@ -10,7 +10,8 @@ export default function Button() {
 
   function handleClick(e: any) {
     e.preventDefault();
-    dispatch(parseTimesheet());
+    // TODO: add toggle for total time
+    dispatch(setOutput(false));
   }
 
   return (
