@@ -12,7 +12,9 @@ export default function ClearIconButton() {
   function handleClick(e: any) {
     e.preventDefault();
 
-    dispatch(clearInput());
+    if (input.length !== 0) {
+      dispatch(clearInput());
+    }
   }
 
   return (
