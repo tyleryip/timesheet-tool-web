@@ -1,16 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
-const timespanRegex = /([1-9][\d]?\:[\d]+)\-([1-9][\d]?\:[\d]+)/;
+const timespanRegex = /([1-9][\d]?:[\d]+)-([1-9][\d]?:[\d]+)/;
 
 export interface TimesheetState {
     input: string;
+    timesheet: Map<string, number>;
     output: string;
+    totalTime: number;
 }
 
 const initialState: TimesheetState = {
     input: "",
+    timesheet: new Map<string, number>(),
     output: "",
+    totalTime: 0
 };
 
 export const timesheetSlice = createSlice({
@@ -19,11 +23,12 @@ export const timesheetSlice = createSlice({
     reducers: {
         changeInput: (state, action: PayloadAction<string>) => {
             return {
+                ...state,
                 input: action.payload,
                 output: ""
             };
         },
-        parseInput: (state) => {
+        parseTimesheet: (state) => {
             return {
                 ...state,
                 output: parseTimesheet(state.input)
@@ -32,7 +37,8 @@ export const timesheetSlice = createSlice({
         clearOutput: (state) => {
             return {
                 ...state,
-                output: ""
+                output: "",
+                totalTime: 0,
             };
         }
     }
@@ -89,7 +95,7 @@ function parseTimesheet(rawTimesheet: string): string {
             const durationInMillis = endTime.getTime() - startTime.getTime();
             const durationInHours = durationInMillis / (1000 * 60 * 60); // Convert from milliseconds to hours
 
-            if (!tasks.has(currentTask)) {
+            if (tasks.has(currentTask)) {
                 var currentDuration = tasks.get(currentTask) ?? 0
                 tasks.set(currentTask, currentDuration + durationInHours);
             } else {
@@ -129,9 +135,10 @@ function parseTimesheet(rawTimesheet: string): string {
     return output;
 }
 
-export const { changeInput, parseInput, clearOutput } = timesheetSlice.actions
+export const { setInput, parseTimesheet, setOutput, clearOutput } = timesheetSlice.actions
 
 export const selectInput = (state: RootState) => state.timesheet.input;
 export const selectOutput = (state: RootState) => state.timesheet.output;
+export const selectTotalTime = (state: RootState) => state.timesheet.totalTime;
 
 export default timesheetSlice.reducer

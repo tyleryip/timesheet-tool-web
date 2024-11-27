@@ -1,6 +1,6 @@
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { parseInput, selectInput } from "../../store/slices/timesheetSlice";
+import { parseTimesheet, selectInput } from "../../store/slices/timesheetSlice";
 import { parseButtonString } from "../../constants/Strings";
 
 export default function Button() {
@@ -10,7 +10,7 @@ export default function Button() {
 
   function handleClick(e: any) {
     e.preventDefault();
-    dispatch(parseInput());
+    dispatch(parseTimesheet());
   }
 
   return (

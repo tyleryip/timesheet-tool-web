@@ -13,7 +13,7 @@ export default function TextBox({ label, placeholder, content, readonly = false,
     return (<div>
         <p className="text-center mb-2">{label}</p>
         <textarea
-            className="textbox rounded p-2"
+            className="textbox rounded-lg p-2"
             placeholder={placeholder}
             readOnly={readonly}
             onChange={(e) => onChangeHandler(e.target.value)}
