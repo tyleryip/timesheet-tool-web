@@ -3,13 +3,17 @@ import { ReactComponent as CopyIcon } from "../../assets/copy.svg";
 import { useAppSelector } from "../../store/hooks";
 import { selectOutput } from "../../store/slices/timesheetSlice";
 import { copyButtonTooltip } from "../../constants/Strings";
+import { useSnackbar } from "react-simple-snackbar";
 
 export default function CopyIconButton() {
+  const [openSnackbar] = useSnackbar();
+
   const output = useAppSelector(selectOutput);
 
   function handleClick(e: any) {
     e.preventDefault();
     if (output.length !== 0) {
+      openSnackbar("Copied to clipboard!", 3000);
       navigator.clipboard.writeText(output);
     }
   }

@@ -1,6 +1,11 @@
 import React from "react";
+import SnackbarProvider from "react-simple-snackbar";
 import Layout from "../Layout/Layout";
 
 export default function App() {
-  return <Layout />;
+  return (
+    <SnackbarProvider>
+      <Layout />
+    </SnackbarProvider>
+  );
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import TextBox from "./TextBox";
+import TextBox from "./TextBox/TextBox";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { selectInput } from "../../store/slices/timesheetSlice";
 import { setInput } from "../../store/slices/timesheetSlice";
