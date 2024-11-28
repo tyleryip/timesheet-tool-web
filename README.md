@@ -1,10 +1,10 @@
 # OhSheet: The Timesheet Tool
 
-TODO: add Netlify deployment badge
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b3e4f960-45ac-42d5-83e8-24a8f78d1f41/deploy-status)](https://app.netlify.com/sites/oh-sheet/deploys)
 
 ## About
 
-The next iteration of timesheet tool, to be used in the browser without any installation or self-installed dependencies.
+The next iteration of timesheet tool, to be used in the browser without any installation or self-installed dependencies. Visit the [live demo site](https://oh-sheet.netlify.app).
 
 ## Features
 
