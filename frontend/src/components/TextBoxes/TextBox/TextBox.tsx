@@ -5,6 +5,7 @@ interface TextBoxProps {
   placeholder?: string;
   content: string;
   readonly?: boolean;
+  spellCheck?: boolean;
   onChangeHandler?: Function;
 }
 
@@ -12,6 +13,7 @@ export default function TextBox({
   placeholder,
   content,
   readonly = false,
+  spellCheck = true,
   onChangeHandler = () => {},
 }: TextBoxProps) {
   return (
@@ -21,6 +23,7 @@ export default function TextBox({
       readOnly={readonly}
       onChange={(e) => onChangeHandler(e.target.value)}
       value={content}
+      spellCheck={spellCheck}
     ></textarea>
   );
 }

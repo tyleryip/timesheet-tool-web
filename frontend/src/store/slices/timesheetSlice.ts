@@ -152,7 +152,7 @@ function generateOutput(tasks: Array<Task>): string {
                 output += `${task.name} (1 hour)\n\n`;
                 break;
             default:
-                output += `${task.name} (${task.hours.toFixed(2)} hours)\n\n`;
+                output += `${task.name} (${Number(task.hours.toFixed(2))} hours)\n\n`;
                 break;
         }
     });

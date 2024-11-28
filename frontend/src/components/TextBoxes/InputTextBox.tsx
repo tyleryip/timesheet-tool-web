@@ -13,7 +13,7 @@ export default function InputTextBox() {
 
   return (
     <div className="h-full w-full max-w-128 flex flex-col">
-      <p className="text-center mb-2">{inputLabel}</p>
+      <p className="text-center mb-1">{inputLabel}</p>
       <div className="grow flex flex-col bg-white rounded-lg p-2 items-start">
         <TextBox
           placeholder={inputPlaceholder}

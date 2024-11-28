@@ -10,3 +10,4 @@ export const copyButtonTooltip = "Copy"
 
 // ParseButton
 export const parseButtonString = "Parse";
+export const parseButtonTooltip = "Parse timesheet"

@@ -6,7 +6,7 @@ import { copyButtonTooltip } from "../../constants/Strings";
 import { useSnackbar } from "react-simple-snackbar";
 
 export default function CopyIconButton() {
-  const [openSnackbar] = useSnackbar();
+  const [openSnackbar] = useSnackbar({ position: "top-right" });
 
   const output = useAppSelector(selectOutput);
 
@@ -20,7 +20,7 @@ export default function CopyIconButton() {
 
   return (
     <button
-      className="disabled:fill-slate-300 fill-slate-700 hover:fill-blue-700 w-7 h-7 p-0.5 self-end"
+      className="disabled:fill-slate-300 fill-slate-700 hover:fill-blue-700 w-7 h-7 p-0.5 mt-2 self-end"
       onClick={(e) => handleClick(e)}
       title={copyButtonTooltip}
       disabled={output.length === 0}
