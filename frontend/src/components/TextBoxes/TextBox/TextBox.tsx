@@ -6,6 +6,7 @@ interface TextBoxProps {
   content: string;
   readonly?: boolean;
   spellCheck?: boolean;
+  hideCaret?: boolean;
   onChangeHandler?: Function;
 }
 
@@ -14,11 +15,14 @@ export default function TextBox({
   content,
   readonly = false,
   spellCheck = true,
+  hideCaret = false,
   onChangeHandler = () => {},
 }: TextBoxProps) {
+  const textboxClass = hideCaret ? "readonly" : "";
+
   return (
     <textarea
-      className="textbox h-full w-full p-1"
+      className={`h-full w-full p-1 textbox ${textboxClass}`}
       placeholder={placeholder}
       readOnly={readonly}
       onChange={(e) => onChangeHandler(e.target.value)}

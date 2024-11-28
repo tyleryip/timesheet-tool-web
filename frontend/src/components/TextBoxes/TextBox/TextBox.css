@@ -2,6 +2,10 @@
   resize: none;
 }
 
+.readonly {
+  caret-color: transparent;
+}
+
 .textbox:focus {
   outline: none;
   border: none;
