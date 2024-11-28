@@ -16,7 +16,7 @@ export default function TextBox({
 }: TextBoxProps) {
   return (
     <textarea
-      className="textbox flex-1 p-1"
+      className="textbox h-full w-full p-1"
       placeholder={placeholder}
       readOnly={readonly}
       onChange={(e) => onChangeHandler(e.target.value)}

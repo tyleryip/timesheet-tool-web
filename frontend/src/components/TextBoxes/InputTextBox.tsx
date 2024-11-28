@@ -12,9 +12,9 @@ export default function InputTextBox() {
   const input = useAppSelector(selectInput);
 
   return (
-    <div>
+    <div className="h-full w-full max-w-128 flex flex-col">
       <p className="text-center mb-2">{inputLabel}</p>
-      <div className="flex flex-col w-64 h-64 bg-white rounded-lg p-2 items-start">
+      <div className="grow flex flex-col bg-white rounded-lg p-2 items-start">
         <TextBox
           placeholder={inputPlaceholder}
           content={input}

@@ -19,7 +19,7 @@ export default function ClearIconButton() {
 
   return (
     <button
-      className="w-5 h-5 p-0.5 self-end"
+      className="disabled:fill-slate-300 fill-slate-700 hover:fill-red-600 w-7 h-7 p-0.5 self-end"
       onClick={(e) => handleClick(e)}
       title={clearButtonTooltip}
       disabled={input.length === 0}
