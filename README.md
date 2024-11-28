@@ -10,13 +10,14 @@ The next iteration of timesheet tool, to be used in the browser without any inst
 
 The following features are included or planned for OhSheet.
 
-[x] Base timesheet parsing format (ex. 9:00-10:30)
-[ ] More flexible timesheet format (ex. 8-9)
-[ ] Error handling and notifications
-[ ] Display total hours for validation
-[x] Clear raw timesheet
-[x] Copy parsed timesheet to clipboard
-[ ] Show example toggle/button or help button
+- [x] Base timesheet parsing format (ex. 9:00-10:30)
+- [ ] More flexible timesheet format (ex. 8-9)
+- [ ] Error handling and notifications
+- [ ] Pre-emptive validation and error notifications
+- [ ] Display total hours for validation
+- [x] Clear raw timesheet
+- [x] Copy parsed timesheet to clipboard
+- [ ] Show example toggle/button or help button
 
 ## Available Scripts
 
