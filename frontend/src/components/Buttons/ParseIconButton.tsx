@@ -35,7 +35,9 @@ export default function ParseIconButton() {
       onClick={handleClick}
       title={parseButtonTooltip}
     >
-      <ArrowIcon className={`w-14 h-14 ${fill} ${animation}`}></ArrowIcon>
+      <ArrowIcon
+        className={`w-8 h-8 md:w-14 md:h-14 ${fill} ${animation}`}
+      ></ArrowIcon>
     </button>
   );
 }
