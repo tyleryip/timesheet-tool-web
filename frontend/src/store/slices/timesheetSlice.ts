@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
-const timespanRegex = /([1-9][\d]?:[\d]+)-([1-9][\d]?:[\d]+)/;
+const timespanRegex = /([1-9][\d]?:[\d]+)\s*-\s*([1-9][\d]?:[\d]+)/;
 
 export interface Task {
     name: string,
@@ -74,14 +74,14 @@ function parseTime(timeStr: string): Date {
 
 function parseTimesheet(rawTimesheet: string): Array<Task> {
     // Split the raw timesheet string into individual lines
-    let lines = rawTimesheet.split('\n')
+    let lines = rawTimesheet.split('\n').map((line) => line.trim())
 
     let tasksMap = new Map<string, number>();
     let currentTask = "";
 
     for (const line of lines) {
         // Skip empty lines
-        if (line.trim() === "") {
+        if (line === "") {
             continue;
         }
 
