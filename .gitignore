@@ -16,3 +16,6 @@
 
 # Local Netlify folder
 .netlify
+
+# test results
+*/reports
