@@ -13,15 +13,18 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Use Node.js 22.x
         uses: actions/setup-node@v4
         with:
           node-version: 22.x
-          cache: "npm"
-      - name: Install dependencies
+
+      - name: Install dependencies via npm
         working-directory: frontend
         run: npm ci
+
       - name: Run tests
         working-directory: frontend
         run: npm test
