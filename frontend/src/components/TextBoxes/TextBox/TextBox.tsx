@@ -22,7 +22,7 @@ export default function TextBox({
 
   return (
     <textarea
-      className={`h-full w-full p-1 textbox ${textboxClass}`}
+      className={`text-sm md:text-base h-full w-full p-1 textbox ${textboxClass}`}
       placeholder={placeholder}
       readOnly={readonly}
       onChange={(e) => onChangeHandler(e.target.value)}

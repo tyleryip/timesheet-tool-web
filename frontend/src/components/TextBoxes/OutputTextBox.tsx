@@ -10,7 +10,9 @@ export default function OutputTextBox() {
 
   return (
     <div className="h-full w-full max-w-128 flex flex-col">
-      <p className="text-center mb-1 font-semibold">{outputLabel}</p>
+      <p className="text-center text-sm md:text-base mb-1 font-semibold">
+        {outputLabel}
+      </p>
       <div className="grow flex flex-col bg-white rounded-lg p-2">
         <TextBox
           placeholder={outputPlaceholder}

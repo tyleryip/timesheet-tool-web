@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
-const timespanRegex = /([1-9][\d]?:[\d]+)-([1-9][\d]?:[\d]+)/;
+const timespanRegex = /([1-9][\d]?:[\d]+)\s*-\s*([1-9][\d]?:[\d]+)/;
 
 export interface Task {
     name: string,
@@ -34,6 +34,7 @@ export const timesheetSlice = createSlice({
                 totalTime: 0,
             };
         },
+        // TODO: remove conditionally calculating total time
         setOutput: (state, action: PayloadAction<boolean>) => {
             var parsedTimesheet = parseTimesheet(state.input)
             var generatedOutput = generateOutput(parsedTimesheet)
@@ -65,23 +66,25 @@ export const timesheetSlice = createSlice({
     }
 });
 
-function parseTime(timeStr: string): Date {
+export function parseTime(timeStr: string): Date {
     const [hours, minutes] = timeStr.split(':').map(Number);
     const date = new Date();
     date.setHours(hours, minutes, 0, 0);
     return date;
 }
 
-function parseTimesheet(rawTimesheet: string): Array<Task> {
+// TODO: break this function down into more testable functions, 
+// add exception handling and validation
+export function parseTimesheet(rawTimesheet: string): Array<Task> {
     // Split the raw timesheet string into individual lines
-    let lines = rawTimesheet.split('\n')
+    let lines = rawTimesheet.split('\n').map((line) => line.trim())
 
     let tasksMap = new Map<string, number>();
     let currentTask = "";
 
     for (const line of lines) {
         // Skip empty lines
-        if (line.trim() === "") {
+        if (line === "") {
             continue;
         }
 
@@ -141,7 +144,7 @@ function parseTimesheet(rawTimesheet: string): Array<Task> {
     return tasksArray
 }
 
-function generateOutput(tasks: Array<Task>): string {
+export function generateOutput(tasks: Array<Task>): string {
     let output = "";
     tasks.forEach((task: Task) => {
         switch (task.hours) {
@@ -160,7 +163,7 @@ function generateOutput(tasks: Array<Task>): string {
     return output.trim();
 }
 
-function calculateTotalTime(tasks: Array<Task>): number {
+export function calculateTotalTime(tasks: Array<Task>): number {
     let totalTime = 0;
     tasks.forEach((task: Task) => {
         totalTime += task.hours
