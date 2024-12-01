@@ -5,26 +5,39 @@ name: Run Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  build:
-
+  run-tests:
+    permissions:
+      id-token: write
+      contents: read
+      checks: write
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm test
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install dependencies via npm
+        working-directory: frontend
+        run: npm install --legacy-peer-deps
+
+      - name: Run tests
+        working-directory: frontend
+        run: npm test
+
+      - name: Report test results
+        uses: dorny/test-reporter@v1
+        if: success() || failure() # run this step even if previous step failed
+        with:
+          name: report-test-results # Name of the check run which will be created
+          path: reports/junit.xml # Path to test results
+          reporter: jest-junit # Format of test results
+          working-directory: frontend
