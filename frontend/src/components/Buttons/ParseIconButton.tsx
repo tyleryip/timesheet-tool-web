@@ -16,8 +16,8 @@ export default function ParseIconButton() {
 
   function handleClick(e: any) {
     e.preventDefault();
-    // TODO: add toggle for total time
-    dispatch(setOutput(false));
+
+    dispatch(setOutput());
   }
 
   const fill =
