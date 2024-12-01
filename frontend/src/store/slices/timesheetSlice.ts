@@ -34,11 +34,10 @@ export const timesheetSlice = createSlice({
                 totalTime: 0,
             };
         },
-        // TODO: remove conditionally calculating total time
-        setOutput: (state, action: PayloadAction<boolean>) => {
+        setOutput: (state) => {
             var parsedTimesheet = parseTimesheet(state.input)
             var generatedOutput = generateOutput(parsedTimesheet)
-            var totalTime = action.payload ? calculateTotalTime(parsedTimesheet) : null
+            var totalTime = calculateTotalTime(parsedTimesheet)
 
             return {
                 ...state,
@@ -66,12 +65,7 @@ export const timesheetSlice = createSlice({
     }
 });
 
-export function parseTime(timeStr: string): Date {
-    const [hours, minutes] = timeStr.split(':').map(Number);
-    const date = new Date();
-    date.setHours(hours, minutes, 0, 0);
-    return date;
-}
+/// Timesheet parsing functions
 
 // TODO: break this function down into more testable functions, 
 // add exception handling and validation
@@ -144,28 +138,64 @@ export function parseTimesheet(rawTimesheet: string): Array<Task> {
     return tasksArray
 }
 
-export function generateOutput(tasks: Array<Task>): string {
+/**
+ * Given a string in this format "XX:xx", convert it into a Date
+ * where the time portion where the hour value is XX and the minute
+ * value is xx
+ * @param timeStr a string in the format "XX:xx"
+ * @returns 
+ */
+export function parseTime(timeStr: string): Date {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+}
+
+/**
+ * Given a timesheet, generate a parsed timesheet output string
+ * @param timesheet 
+ * @returns a string representing the parsed output of the timesheet
+ */
+export function generateOutput(timesheet: Array<Task>): string {
     let output = "";
-    tasks.forEach((task: Task) => {
-        switch (task.hours) {
-            case 0:
-                // Ignore tasks with no durations
-                break;
-            case 1:
-                output += `${task.name} (1 hour)\n\n`;
-                break;
-            default:
-                output += `${task.name} (${Number(task.hours.toFixed(2))} hours)\n\n`;
-                break;
+    timesheet.forEach((task: Task) => {
+        if (task.hours === 0) {
+            // Ignore tasks with no durations
+            return;
         }
+
+        output += `${task.name} (${getHoursString(task.hours)})\n\n`;
     });
 
     return output.trim();
 }
 
-export function calculateTotalTime(tasks: Array<Task>): number {
+/**
+ * Given a number representing hours, returns a string that denotes the number of hour(s), 
+ * accounting for plural or singular values
+ * @param hours
+ * @returns a string with the number of hours, empty string if hours is zero
+ */
+export function getHoursString(hours: number): string {
+    switch (hours) {
+        case 0:
+            return "";
+        case 1:
+            return "1 hour"
+        default:
+            return `${Number(hours.toFixed(2))} hours`
+    }
+}
+
+/**
+ * Given a timesheet, returns the sum of the hours
+ * @param timesheet
+ * @returns the sum of the hours in the timesheet, zero if the timesheet is empty
+ */
+export function calculateTotalTime(timesheet: Array<Task>): number {
     let totalTime = 0;
-    tasks.forEach((task: Task) => {
+    timesheet.forEach((task: Task) => {
         totalTime += task.hours
     });
 

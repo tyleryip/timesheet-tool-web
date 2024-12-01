@@ -6,6 +6,7 @@ export const clearButtonTooltip = "Clear"
 // OutputTextBox
 export const outputLabel = "Parsed Timesheet";
 export const outputPlaceholder = "Click → to parse timesheet."
+export const totalTimeLabel = "Total time: {totalTime}"
 export const copyButtonTooltip = "Copy"
 
 // ParseButton
