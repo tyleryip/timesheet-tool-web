@@ -1,4 +1,4 @@
-# OhSheet: The Timesheet Tool
+# OhSheet! The Timesheet Tool
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/b3e4f960-45ac-42d5-83e8-24a8f78d1f41/deploy-status)](https://app.netlify.com/sites/oh-sheet/deploys)
 
@@ -13,13 +13,14 @@ The next iteration of timesheet tool, to be used in the browser without any inst
 The following features are included or planned for OhSheet.
 
 - [x] Base timesheet parsing format (ex. 9:00-10:30)
+- [x] Clear raw timesheet
+- [x] Copy parsed timesheet to clipboard
+- [ ] Display total hours for validation
 - [ ] More flexible timesheet format (ex. 8-9)
 - [ ] Error handling and notifications
 - [ ] Pre-emptive validation and error notifications
-- [ ] Display total hours for validation
-- [x] Clear raw timesheet
-- [x] Copy parsed timesheet to clipboard
 - [ ] Show example toggle/button or help button
+- [ ] Export parsed timesheet
 
 ## Available Scripts
 
@@ -31,6 +32,14 @@ npm start
 ```
 
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+To run unit tests using Jest:
+
+```
+npm test
+```
+
+Test results will output to `/reports`. Unit tests will also run on PR against main and develop.
 
 ## References
 
