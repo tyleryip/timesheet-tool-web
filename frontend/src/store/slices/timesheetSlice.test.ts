@@ -3,16 +3,22 @@ import { calculateTotalTime, parseTime, parseTimesheet, Task } from "./timesheet
 describe('testing timesheet slice functions', () => {
     // parseTime(timeStr: string): Date 
     test('parseTime should return valid time', () => {
+        // Arrange
         var timeString = "1:00"
 
         var expected = new Date()
         expected.setHours(1, 0, 0, 0);
 
-        expect(parseTime(timeString)).toEqual(expected);
+        // Act
+        var actual = parseTime(timeString)
+
+        // Assert
+        expect(actual).toEqual(expected);
     });
 
     // parseTimesheet(rawTimesheet: string): Array<Task>
     test('parseTimesheet should parse one task', () => {
+        // Arrange
         var rawTimesheet =
             `
         Testing\n
@@ -25,10 +31,16 @@ describe('testing timesheet slice functions', () => {
             hours: 1
         })
 
-        expect(parseTimesheet(rawTimesheet)).toEqual(expected);
+        // Act
+        var actual = parseTimesheet(rawTimesheet)
+
+        // Assert
+
+        expect(actual).toEqual(expected);
     });
 
     test('parseTimesheet should parse one task with multiple windows', () => {
+        // Arrange
         var rawTimesheet =
             `
         Testing\n
@@ -42,10 +54,15 @@ describe('testing timesheet slice functions', () => {
             hours: 1.5
         })
 
-        expect(parseTimesheet(rawTimesheet)).toEqual(expected);
+        // Act
+        var actual = parseTimesheet(rawTimesheet)
+
+        // Assert
+        expect(actual).toEqual(expected);
     });
 
     test('parseTimesheet should parse two tasks', () => {
+        // Arrange
         var rawTimesheet =
             `
         Testing\n
@@ -65,10 +82,15 @@ describe('testing timesheet slice functions', () => {
             hours: 0.5
         })
 
-        expect(parseTimesheet(rawTimesheet)).toEqual(expected);
+        // Act
+        var actual = parseTimesheet(rawTimesheet)
+
+        // Assert
+        expect(actual).toEqual(expected);
     });
 
     test('parseTimesheet should parse task with no time', () => {
+        // Arrange
         var rawTimesheet =
             `
         Testing\n
@@ -80,11 +102,16 @@ describe('testing timesheet slice functions', () => {
             hours: 0
         })
 
-        expect(parseTimesheet(rawTimesheet)).toEqual(expected);
+        // Act
+        var actual = parseTimesheet(rawTimesheet)
+
+        // Assert
+        expect(actual).toEqual(expected);
     });
 
     // calculateTotalTime(tasks: Array<Task>): number
     test('calculateTotalTime should correctly calculate total time', () => {
+        // Arrange
         var timesheet = Array<Task>();
 
         timesheet.push({
@@ -104,12 +131,21 @@ describe('testing timesheet slice functions', () => {
             hours: 0
         });
 
-        expect(calculateTotalTime(timesheet)).toEqual(7.25)
+        // Act
+        var actual = calculateTotalTime(timesheet)
+
+        // Assert
+        expect(actual).toEqual(7.25)
     });
 
     test('calculateTotalTime should correctly calculate total time when timesheet is empty', () => {
+        // Arrange
         var timesheet = Array<Task>();
 
-        expect(calculateTotalTime(timesheet)).toEqual(0)
+        // Act
+        var actual = calculateTotalTime(timesheet)
+
+        //Assert
+        expect(actual).toEqual(0)
     });
 });
