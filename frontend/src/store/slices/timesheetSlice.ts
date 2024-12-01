@@ -34,11 +34,10 @@ export const timesheetSlice = createSlice({
                 totalTime: 0,
             };
         },
-        // TODO: remove conditionally calculating total time
-        setOutput: (state, action: PayloadAction<boolean>) => {
+        setOutput: (state) => {
             var parsedTimesheet = parseTimesheet(state.input)
             var generatedOutput = generateOutput(parsedTimesheet)
-            var totalTime = action.payload ? calculateTotalTime(parsedTimesheet) : null
+            var totalTime = calculateTotalTime(parsedTimesheet)
 
             return {
                 ...state,
