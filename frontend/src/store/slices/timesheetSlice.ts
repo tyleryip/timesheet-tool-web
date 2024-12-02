@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 
-const timespanRegex = /([1-9][\d]?:[\d]+)\s*-\s*([1-9][\d]?:[\d]+)/;
+const timespanRegex = /^(\d{1,2}(?::\d{2})?)\s*-\s*(\d{1,2}(?::\d{2})?)$/;
 
 export interface Task {
     name: string,
@@ -67,8 +67,11 @@ export const timesheetSlice = createSlice({
 
 /// Timesheet parsing functions
 
-// TODO: break this function down into more testable functions, 
-// add exception handling and validation
+/**
+ * Given a string representing a raw timesheet, parse it into an array of tasks.
+ * @param rawTimesheet a string, representing the raw timesheet
+ * @returns an array of tasks, representing the parsed content of the timesheet
+ */
 export function parseTimesheet(rawTimesheet: string): Array<Task> {
     // Split the raw timesheet string into individual lines
     let lines = rawTimesheet.split('\n').map((line) => line.trim())
@@ -87,42 +90,19 @@ export function parseTimesheet(rawTimesheet: string): Array<Task> {
             const start = timespanMatch[1];
             const end = timespanMatch[2];
 
-            let startTime = parseTime(start);
-            let endTime = parseTime(end);
+            var durationHours = calculateDurationInHours(start, end)
 
-            // Edge case: if task only starts during the noon hour and does not end, 
-            // we need to convert the start time hour to 0.
-            if (startTime.getHours() === 12 && endTime.getHours() !== 12) {
-                startTime.setHours(0); // Adjust start time to 0 hours
-            }
+            // Add duration to task map
+            var currentDuration = tasksMap.get(currentTask) ?? 0
+            tasksMap.set(currentTask, currentDuration + durationHours);
 
-            // Edge case: if task starts during the noon hour AND ends during the noon hour, 
-            // we need to convert both the start and end time to 0.
-            if (startTime.getHours() === 12 && endTime.getHours() === 12) {
-                startTime.setHours(0);
-                endTime.setHours(0);
-            }
-
-            // Edge case: if task starts in morning and ends in afternoon, add 12 hours to the end time
-            if (endTime < startTime) {
-                endTime.setHours(endTime.getHours() + 12);
-            }
-
-            const durationMilliseconds = endTime.getTime() - startTime.getTime();
-            const durationHours = durationMilliseconds / (1000 * 60 * 60); // Convert from milliseconds to hours
-
-            if (tasksMap.has(currentTask)) {
-                var currentDuration = tasksMap.get(currentTask) ?? 0
-                tasksMap.set(currentTask, currentDuration + durationHours);
-            } else {
-                tasksMap.set(currentTask, durationHours);
-            }
+            continue;
         }
-        else {
-            currentTask = line.trim();
-            if (!tasksMap.has(currentTask)) {
-                tasksMap.set(currentTask, 0);
-            }
+
+        // Add task to task map
+        currentTask = line.trim();
+        if (!tasksMap.has(currentTask)) {
+            tasksMap.set(currentTask, 0);
         }
     }
 
@@ -139,6 +119,41 @@ export function parseTimesheet(rawTimesheet: string): Array<Task> {
 }
 
 /**
+ * Given two strings in this format XX:xx, convert them into
+ * a timespan and a return the duration between them.
+ * @param timespanStart a string in the format XX:xx
+ * @param timespanEnd a string in the format XX:xx
+ * @returns the duration between the timespanStart and timespanEnd
+ */
+export function calculateDurationInHours(timespanStart: string, timespanEnd: string): number {
+    const startTime = parseTime(timespanStart);
+    const endTime = parseTime(timespanEnd);
+
+    // Edge case: if task only starts during the noon hour and does not end, 
+    // we need to convert the start time hour to 0.
+    if (startTime.getHours() === 12 && endTime.getHours() !== 12) {
+        startTime.setHours(0); // Adjust start time to 0 hours
+    }
+
+    // Edge case: if task starts during the noon hour AND ends during the noon hour, 
+    // we need to convert both the start and end time to 0.
+    if (startTime.getHours() === 12 && endTime.getHours() === 12) {
+        startTime.setHours(0);
+        endTime.setHours(0);
+    }
+
+    // Edge case: if task starts in morning and ends in afternoon, add 12 hours to the end time
+    if (endTime < startTime) {
+        endTime.setHours(endTime.getHours() + 12);
+    }
+
+    const durationMilliseconds = endTime.getTime() - startTime.getTime();
+
+    // Convert from milliseconds to hours
+    return durationMilliseconds / (1000 * 60 * 60);
+}
+
+/**
  * Given a string in this format "XX:xx", convert it into a Date
  * where the time portion where the hour value is XX and the minute
  * value is xx
@@ -146,8 +161,12 @@ export function parseTimesheet(rawTimesheet: string): Array<Task> {
  * @returns 
  */
 export function parseTime(timeStr: string): Date {
-    const [hours, minutes] = timeStr.split(':').map(Number);
     const date = new Date();
+
+    const [hours, minutes] = timeStr.includes(':') ?
+        timeStr.split(':').map(Number) :
+        [Number(timeStr), 0];
+
     date.setHours(hours, minutes, 0, 0);
     return date;
 }
