@@ -3,6 +3,7 @@ import TextBox from "./TextBox/TextBox";
 import { useAppSelector } from "../../store/hooks";
 import {
   getHoursString,
+  selectInput,
   selectOutput,
   selectTotalTime,
 } from "../../store/slices/timesheetSlice";
@@ -14,6 +15,7 @@ import {
 import CopyIconButton from "../Buttons/CopyIconButton";
 
 export default function OutputTextBox() {
+  const input = useAppSelector(selectInput);
   const output = useAppSelector(selectOutput);
   const totalTime = useAppSelector(selectTotalTime) ?? 0;
 
@@ -32,7 +34,7 @@ export default function OutputTextBox() {
       </p>
       <div className="grow flex flex-col bg-white rounded-lg p-2">
         <TextBox
-          placeholder={outputPlaceholder}
+          placeholder={input.length > 0 ? outputPlaceholder : ""}
           content={output}
           spellCheck={false}
           hideCaret={true}
