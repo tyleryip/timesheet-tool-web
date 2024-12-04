@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
+import { TimesheetErrorType } from "../../constants/TimesheetErrorType";
 
 const timespanRegex = /^(\d{1,2}(?::\d{2})?)\s*-\s*(\d{1,2}(?::\d{2})?)$/;
 
@@ -8,18 +9,25 @@ export interface Task {
     hours: number
 }
 
+export interface TimesheetError {
+    line: string,
+    errorType: TimesheetErrorType
+}
+
 export interface TimesheetState {
     input: string;
     timesheet: Array<Task>;
     output: string;
     totalTime: number | null
+    errors: Array<TimesheetError>;
 }
 
 const initialState: TimesheetState = {
     input: "",
     timesheet: Array<Task>(),
     output: "",
-    totalTime: 0
+    totalTime: 0,
+    errors: Array<TimesheetError>()
 };
 
 export const timesheetSlice = createSlice({
@@ -32,7 +40,16 @@ export const timesheetSlice = createSlice({
                 timesheet: Array<Task>(),
                 output: "",
                 totalTime: 0,
+                errors: Array<TimesheetError>()
             };
+        },
+        validateInput: (state) => {
+            var errors = validateTimesheet(state.input)
+
+            return {
+                ...state,
+                errors: errors
+            }
         },
         setOutput: (state) => {
             var parsedTimesheet = parseTimesheet(state.input)
@@ -43,7 +60,8 @@ export const timesheetSlice = createSlice({
                 ...state,
                 timesheet: parsedTimesheet,
                 output: generatedOutput,
-                totalTime: totalTime
+                totalTime: totalTime,
+                errors: Array<TimesheetError>()
             };
         },
         clearInput: (_) => {
@@ -52,6 +70,7 @@ export const timesheetSlice = createSlice({
                 timesheet: Array<Task>(),
                 output: "",
                 totalTime: 0,
+                errors: Array<TimesheetError>()
             };
         },
         clearOutput: (state) => {
@@ -60,6 +79,7 @@ export const timesheetSlice = createSlice({
                 timesheet: Array<Task>(),
                 output: "",
                 totalTime: 0,
+                errors: Array<TimesheetError>()
             };
         }
     }
@@ -68,20 +88,89 @@ export const timesheetSlice = createSlice({
 /// Timesheet parsing functions
 
 /**
+ * Given a string representing a raw timesheet, validate it errors that would prevent successful parsing
+ * and return a list of those errors.
+ * @param rawTimesheet a string, representing a raw timesheet
+ * @returns an array of errors
+ */
+export function validateTimesheet(rawTimesheet: string): Array<TimesheetError> {
+    let errors = Array<TimesheetError>();
+
+    // Split the raw timesheet string into individual lines
+    let lines = rawTimesheet.split('\n').map((line) => line.trim())
+
+    let currentTask = "";
+    let currentDuration = 0;
+    for (const line of lines) {
+        if (line === "") {
+            // Skip empty lines
+            continue;
+        }
+
+        // Validate timespan lines
+        const timespanMatch = line.match(timespanRegex);
+        if (timespanMatch) {
+            // Rule 1: Timespans must be proceeded by a task name
+            if (currentTask === "") {
+                errors.push({
+                    line: line,
+                    errorType: TimesheetErrorType.MissingTaskName
+                })
+            }
+
+            const start = timespanMatch[1];
+            const end = timespanMatch[2];
+
+            var durationHours = calculateDurationInHours(start, end)
+
+            if (durationHours === 0) {
+                // Rule 2: All timespans must be greater than zero
+                errors.push({
+                    line: line,
+                    errorType: TimesheetErrorType.TimespanEqualToZero
+                })
+            }
+
+            currentDuration += durationHours;
+
+            continue;
+        }
+
+        // Validate task lines
+
+        // Rule 2: All tasks must have a non-zero duration,
+        // except for the first task which may have duration of zero until its timespan is reached)
+        if ((currentTask !== "" && line !== currentTask && currentDuration === 0)
+            || (lines.length === 1)) {
+            errors.push({
+                line: line,
+                errorType: TimesheetErrorType.MissingTimespan
+            })
+        }
+
+        // Reset the current task and current duration
+        currentTask = line.trim();
+        currentDuration = 0;
+    }
+
+    return errors
+}
+
+/**
  * Given a string representing a raw timesheet, parse it into an array of tasks.
  * @param rawTimesheet a string, representing the raw timesheet
  * @returns an array of tasks, representing the parsed content of the timesheet
  */
 export function parseTimesheet(rawTimesheet: string): Array<Task> {
+    let tasksMap = new Map<string, number>();
+
     // Split the raw timesheet string into individual lines
     let lines = rawTimesheet.split('\n').map((line) => line.trim())
 
-    let tasksMap = new Map<string, number>();
     let currentTask = "";
-
     for (const line of lines) {
-        // Skip empty lines
         if (line === "") {
+            // Skip empty lines
             continue;
         }
 
@@ -221,10 +310,11 @@ export function calculateTotalTime(timesheet: Array<Task>): number {
     return totalTime;
 }
 
-export const { setInput, setOutput, clearInput, clearOutput } = timesheetSlice.actions
+export const { setInput, setOutput, validateInput, clearInput, clearOutput } = timesheetSlice.actions
 
 export const selectInput = (state: RootState) => state.timesheet.input;
 export const selectOutput = (state: RootState) => state.timesheet.output;
 export const selectTotalTime = (state: RootState) => state.timesheet.totalTime;
+export const selectErrors = (state: RootState) => state.timesheet.errors;
 
 export default timesheetSlice.reducer
