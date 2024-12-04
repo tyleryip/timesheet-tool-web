@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../store";
-import { TimesheetErrorType } from "../../constants/TimesheetErrorType";
+import { TimesheetErrorType } from "../../types/TimesheetErrorType";
 
 const timespanRegex = /^(\d{1,2}(?::\d{2})?)\s*-\s*(\d{1,2}(?::\d{2})?)$/;
 
@@ -144,7 +144,7 @@ export function validateTimesheet(rawTimesheet: string): Array<TimesheetError> {
             || (lines.length === 1)) {
             errors.push({
                 line: line,
-                errorType: TimesheetErrorType.MissingTimespan
+                errorType: TimesheetErrorType.MissingOrInvalidTimespan
             })
         }
 

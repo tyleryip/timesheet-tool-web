@@ -1,5 +1,5 @@
 export enum TimesheetErrorType {
     MissingTaskName,
-    MissingTimespan,
+    MissingOrInvalidTimespan,
     TimespanEqualToZero
 }

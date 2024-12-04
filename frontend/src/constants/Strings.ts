@@ -1,5 +1,5 @@
 import { TimesheetError } from "../store/slices/timesheetSlice";
-import { TimesheetErrorType } from "./TimesheetErrorType";
+import { TimesheetErrorType } from "../types/TimesheetErrorType";
 
 // InputTextBox
 export const inputLabel = "Raw Timesheet";
@@ -17,9 +17,9 @@ export const parseButtonString = "Parse";
 export const parseButtonTooltip = "Parse timesheet"
 
 // Errors
-const missingTaskNameMessage = "Error: Timesheet missing task name near '{line}'."
-const missingTimespanMessage = "Error: Timesheet missing timespan near '{line}'."
-const timespanEqualToZeroMessage = "Error: Timesheet contains a timespan equal to zero near '{line}'."
+const missingTaskNameMessage = "Error: Missing task name near '{line}'."
+const missingOrInvalidTimespanMessage = "Error: Missing or invalid timespan near '{line}'."
+const timespanEqualToZeroMessage = "Error: Timespan equal to zero near '{line}'."
 
 export function getErrorMessage(error: TimesheetError): string {
     var errorMessage = "";
@@ -28,8 +28,8 @@ export function getErrorMessage(error: TimesheetError): string {
             errorMessage = missingTaskNameMessage.replace("{line}", error.line);
             break;
         }
-        case TimesheetErrorType.MissingTimespan: {
-            errorMessage = missingTimespanMessage.replace("{line}", error.line);
+        case TimesheetErrorType.MissingOrInvalidTimespan: {
+            errorMessage = missingOrInvalidTimespanMessage.replace("{line}", error.line);
             break;
         }
         case TimesheetErrorType.TimespanEqualToZero: {
