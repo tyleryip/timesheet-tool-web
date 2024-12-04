@@ -1,4 +1,5 @@
-import { calculateDurationInHours, calculateTotalTime, parseTime, parseTimesheet, Task } from "./timesheetSlice";
+import { TimesheetErrorType } from "../../types/TimesheetErrorType";
+import { calculateDurationInHours, calculateTotalTime, parseTime, parseTimesheet, Task, TimesheetError, validateTimesheet } from "./timesheetSlice";
 
 describe('timesheet parsing functions', () => {
     describe('parseTime(timeStr: string): Date', () => {
@@ -269,4 +270,74 @@ describe('timesheet parsing functions', () => {
             expect(actual).toBe(expected)
         });
     });
+
+    describe('validateTimesheet(rawTimesheet: string): Array<TimesheetError>', () => {
+        it('should catch a missing task name error', () => {
+            // Arrange
+            var timesheet =
+                `
+            10-11:30
+            `
+
+            var expected = Array<TimesheetError>()
+            expected.push({
+                line: "10-11:30",
+                errorType: TimesheetErrorType.MissingTaskName
+            })
+
+            // Act
+            var actual = validateTimesheet(timesheet)
+
+            // Assert
+            expect(actual).toEqual(expected)
+        })
+
+        it('should catch a timespan equal to zero error', () => {
+            // Arrange
+            var timesheet =
+                `
+            Task
+            10-10
+            `
+
+            var expected = Array<TimesheetError>()
+            expected.push({
+                line: "10-10",
+                errorType: TimesheetErrorType.TimespanEqualToZero
+            })
+
+            // Act
+            var actual = validateTimesheet(timesheet)
+
+            // Assert
+            expect(actual).toEqual(expected)
+        })
+
+        it('should catch a missing or invalid timespan error', () => {
+            // Arrange
+            var timesheet =
+                `
+            Task A
+
+            Task B
+            1-111111
+            `
+
+            var expected = Array<TimesheetError>()
+            expected.push({
+                line: "Task B",
+                errorType: TimesheetErrorType.MissingOrInvalidTimespan
+            })
+            expected.push({
+                line: "1-111111",
+                errorType: TimesheetErrorType.MissingOrInvalidTimespan
+            })
+
+            // Act
+            var actual = validateTimesheet(timesheet)
+
+            // Assert
+            expect(actual).toEqual(expected)
+        })
+    })
 });
