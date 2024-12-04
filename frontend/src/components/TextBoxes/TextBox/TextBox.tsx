@@ -8,6 +8,7 @@ interface TextBoxProps {
   spellCheck?: boolean;
   hideCaret?: boolean;
   onChangeHandler?: Function;
+  onBlurHandler?: Function;
 }
 
 export default function TextBox({
@@ -17,6 +18,7 @@ export default function TextBox({
   spellCheck = true,
   hideCaret = false,
   onChangeHandler = () => {},
+  onBlurHandler = () => {},
 }: TextBoxProps) {
   const textboxClass = hideCaret ? "readonly" : "";
 
@@ -26,6 +28,7 @@ export default function TextBox({
       placeholder={placeholder}
       readOnly={readonly}
       onChange={(e) => onChangeHandler(e.target.value)}
+      onBlur={(e) => onBlurHandler(e.target.value)}
       value={content}
       spellCheck={spellCheck}
     ></textarea>
