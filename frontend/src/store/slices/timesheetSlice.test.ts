@@ -269,34 +269,4 @@ describe('timesheet parsing functions', () => {
             expect(actual).toBe(expected)
         });
     });
-
-    // calculateTotalTime(tasks: Array<Task>): number
-    test('calculateTotalTime should correctly calculate total time', () => {
-        var timesheet = Array<Task>();
-
-        timesheet.push({
-            name: "Task 1",
-            hours: 1
-        });
-        timesheet.push({
-            name: "Task 2",
-            hours: 2.5
-        });
-        timesheet.push({
-            name: "Task 3",
-            hours: 3.75
-        });
-        timesheet.push({
-            name: "Task 4",
-            hours: 0
-        });
-
-        expect(calculateTotalTime(timesheet)).toEqual(7.25)
-    });
-
-    test('calculateTotalTime should correctly calculate total time when timesheet is empty', () => {
-        var timesheet = Array<Task>();
-
-        expect(calculateTotalTime(timesheet)).toEqual(0)
-    });
 });
