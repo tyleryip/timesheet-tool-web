@@ -5,6 +5,7 @@ import {
   setOutput,
   selectInput,
   selectOutput,
+  selectErrors,
 } from "../../store/slices/timesheetSlice";
 import { parseButtonTooltip } from "../../constants/Strings";
 
@@ -13,6 +14,7 @@ export default function ParseIconButton() {
 
   const input = useAppSelector(selectInput);
   const output = useAppSelector(selectOutput);
+  const errors = useAppSelector(selectErrors);
 
   function handleClick(e: any) {
     e.preventDefault();
@@ -21,17 +23,19 @@ export default function ParseIconButton() {
   }
 
   const fill =
-    input.length === 0 || output.length !== 0
+    input.length === 0 || output.length !== 0 || errors.length > 0
       ? "fill-slate-300"
       : "fill-slate-600";
 
   const animation =
-    input.length > 0 && output.length === 0 ? "animate-pulse" : "";
+    input.length > 0 && output.length === 0 && errors.length === 0
+      ? "animate-pulse"
+      : "";
 
   return (
     <button
       className="disabled:cursor-not-allowed"
-      disabled={input.length === 0}
+      disabled={input.length === 0 || output.length !== 0 || errors.length > 0}
       onClick={handleClick}
       title={parseButtonTooltip}
     >

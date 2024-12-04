@@ -17,8 +17,8 @@ The following features are included or planned for OhSheet.
 - [x] Copy parsed timesheet to clipboard
 - [x] Display total hours for validation
 - [x] More flexible timesheet format (ex. 8-9)
-- [ ] Error handling and notifications
-- [ ] Pre-emptive validation and error notifications
+- [x] Error handling and notifications
+- [x] Pre-emptive validation and error notifications
 - [ ] Show example toggle/button or help button
 - [ ] Export parsed timesheet
 
